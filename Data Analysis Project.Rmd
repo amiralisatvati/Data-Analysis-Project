@@ -1,0 +1,147 @@
+---
+title: "Data Analysis Using Image Processing, Text Processing, and Social Network Analysis"
+author: "Amirali Satvati"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: cerulean
+    toc: true
+    toc_float: true
+    toc_depth: 4
+highlight: tango
+
+---
+# Image Animation Processor
+
+```{r, warning=FALSE,message=FALSE}
+library(magick)
+
+image2 <- image_read("C:\\Users\\WIN10\\Desktop\\2.jpg")
+image3 <- image_read("C:\\Users\\WIN10\\Desktop\\3.jpg")
+image <- image_read("C:\\Users\\WIN10\\Desktop\\1.jpg")
+
+image <- image_scale(image, "x500")
+image <- image_rotate(image, degrees = 0)
+image <- image_border(image_background(image, "hotpink"), "#000000", "0x5")
+image <- image_annotate(image, "The Third Data Science Seminar   ", size = 29, gravity = "east", color = "blue")
+
+img <- c(image, image2, image3)
+image_animate(image_scale(img, "200x200"), fps = 1, dispose = "background")
+
+img <- c(image, image2, image3)
+image_write(image_animate(image_scale(img, "200x200"), fps = 1, dispose = "background"), "imageanalysis.gif")
+```
+
+# Word Cloud Builder
+
+```{r,warning=FALSE,message=FALSE}
+     
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library(wordcloud2)
+library(RColorBrewer)
+library(magick)
+library(png)
+library(rvest)
+
+url <- "https://ganjoor.net/hafez/ghazal"
+page <- read_html(url)
+text <- page %>% html_nodes("div.poem") %>% html_text()
+
+docs <- Corpus(VectorSource(text))
+
+toSpace <- content_transformer(function(x, pattern) gsub(pattern, " ", x))
+docs <- tm_map(docs, toSpace, "/")
+docs <- tm_map(docs, toSpace, "@")
+docs <- tm_map(docs, toSpace, "\\|")
+docs <- tm_map(docs, removeNumbers)
+docs <- tm_map(docs, content_transformer(tolower))
+docs <- tm_map(docs, removePunctuation)
+docs <- tm_map(docs, stripWhitespace)
+
+my_stopwords <- c(
+  "که", "به", "در", "از", "تو", "آن", "ما", "ای", "من", "است", 
+  "و", "یا", "اگر", "این", "برای", "تا", "هم", "را", 
+  "اما", "با", "بر", "بیش", "روز", "زیرا", 
+  "شده", "شدن", "شوند", "کرد", "کردن", 
+  "کند", "کنند", "نیز", "هر", 
+  "چه", "بود", "شد", "چو", "گر"
+)
+docs <- tm_map(docs, removeWords, my_stopwords)
+docs <- tm_map(docs, removeWords, c("غزل", "شماره"))
+
+# تعریف تابع removeEnglish برای حذف کلمات انگلیسی
+removeEnglish <- content_transformer(function(x) {
+  gsub("[a-zA-Z]+", "", x)  # حذف تمام کلمات انگلیسی
+})
+
+# اعمال تابع removeEnglish روی docs
+docs <- tm_map(docs, removeEnglish)
+
+dtm <- TermDocumentMatrix(docs)
+m <- as.matrix(dtm)
+v <- sort(rowSums(m), decreasing = TRUE)
+d <- data.frame(word = names(v), freq = v)
+wordcloud2(
+  data = d, 
+  size = 1.5, 
+  color = "random-light", 
+  backgroundColor = "black", 
+  shape = "diamond", 
+  fontFamily = "Inria Sans", 
+  rotateRatio = 0.5
+)
+```
+
+
+# Network Graph Analyzer
+
+
+```{r,warning=FALSE,message=FALSE}
+    
+library(igraph)
+data <- read.table("C:\\Users\\WIN10\\Desktop\\SocialNetworkAnalysis.txt", sep = ",", header = TRUE)
+y <- data.frame(data$first, data$second)
+
+net <- graph.data.frame(y, directed=T)
+V(net)
+E(net)
+
+
+
+V(net)$label <- V(net)$name
+V(net)$degree <- degree(net)
+
+
+library(igraph)
+
+layout <- layout_with_fr(net)
+layout <- layout * 0.3
+plot(net,
+     vertex.color = rainbow(52, alpha = 0.8),vertex.size = 20,                
+     vertex.frame.color = "white",    
+     vertex.label.color = "black",   
+     vertex.label.cex = 0.5,          
+     edge.arrow.size = 0.2,          
+     edge.color = "gray80",          
+     edge.width = 0.8,                  
+     layout = layout,     
+     vertex.size = V(net)$degree * 1.5,
+     rescale = FALSE,asp = 1.625
+     ,main = "Social Network Analysis"
+)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
