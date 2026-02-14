@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Data Analysis Project - University 2</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+h1 { color: #2c3e50; }
+pre { background: #f8f9fa; padding: 15px; border-radius: 5px; }
+</style>
+</head>
+<body>
+<h1>Data Analysis Project (University 2)</h1>
+<p>This project involves exploratory data analysis and statistical modeling on a large dataset.</p>
+
+<h2>Dataset Overview</h2>
+<pre><code>summary(dataset)
+head(dataset)
+dim(dataset)</code></pre>
+
+<h2>Key Visualizations</h2>
+<p><img src="output_image.jpg" alt="Visualization 1" width="600"></p>
+
+<h2>Hypothesis Testing</h2>
+<ul>
+<li>T-test result: p-value < 0.05 (Reject H0)</li>
+<li>ANOVA result: Significant differences between groups (F=4.5, p=0.012)</li>
+</ul>
+
+<h2>Regression Model</h2>
+<pre><code>model <- lm(Target ~ Feature1 + Feature2, data=dataset)
+summary(model)</code></pre>
+
+<p><em>Report generated using RMarkdown.</em></p>
+</body>
+</html>
